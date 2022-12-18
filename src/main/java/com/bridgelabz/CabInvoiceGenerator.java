@@ -10,6 +10,15 @@ public class CabInvoiceGenerator {
         return distance * MINIMUM_COST_PER_KILOMETER + time * COST_PER_TIME;
     }
 
+    //Creating calculateFare method with multiple rides
+    public double calculateFare(Ride[] rides) {
+        double totalFare = 0.0;
+        for (Ride ride : rides) {//Iterate over the rides
+            totalFare += calculateFare(ride.getDistance(), ride.getTime());//calculate total fare
+        }
+        return totalFare;
+    }
+
     public static void main(String[] args) {
         System.out.println("Total Fair is : " + calculateFare(5.5, 10));//calling method calculateFare and pass distance and time
     }
