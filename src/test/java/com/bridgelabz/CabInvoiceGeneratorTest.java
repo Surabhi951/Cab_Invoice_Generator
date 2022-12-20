@@ -3,6 +3,8 @@ package com.bridgelabz;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 public class CabInvoiceGeneratorTest {
 
     CabInvoiceGenerator cabInvoiceGenerator = new CabInvoiceGenerator();//creating object of CabInvoiceGenerator class
@@ -32,6 +34,18 @@ public class CabInvoiceGeneratorTest {
         };
         Invoice invoice = cabInvoiceGenerator.calculateFare(rides);//using object calling calculateFare method
         Invoice expectedInvoice = new Invoice(2, 120.0);//invoice store in expectedInvoice
+        Assertions.assertEquals(invoice, expectedInvoice);
+    }
+
+    @Test
+    public void givenUserId_ShouldReturn_Invoice() {
+        Ride[] rides = {
+                new Ride(2.0, 5),
+                new Ride(3.1, 5)
+        };
+        cabInvoiceGenerator.rideRepository.put("User01", Arrays.asList(rides));
+        Invoice invoice = cabInvoiceGenerator.calculateFare("User01");
+        Invoice expectedInvoice = new Invoice(2, 61.0);
         Assertions.assertEquals(invoice, expectedInvoice);
     }
 }
