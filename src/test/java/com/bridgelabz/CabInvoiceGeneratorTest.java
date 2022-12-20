@@ -15,7 +15,7 @@ public class CabInvoiceGeneratorTest {
         Assertions.assertEquals(65, fare);//Verifies that the expected and actual values are equal
     }
 
-    //calculate minimum fare
+    //calculate minimum fare using distance and time
     @Test
     public void givenMinDistanceAndTime_ShouldReturn_MinFare() {
         double distance = 1.5;
