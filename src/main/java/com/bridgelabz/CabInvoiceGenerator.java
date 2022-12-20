@@ -6,39 +6,52 @@ import java.util.Map;
 
 public class CabInvoiceGenerator {
 
-    private static final int MINIMUM_COST_PER_KILOMETER = 10;
-    private static final int COST_PER_TIME = 1;
-    private static final int MIN_FARE = 5;
+    private static final int NORMAL_RIDE_MINIMUM_COST_PER_KILOMETER = 10;
+    private static final int NORMAL_RIDE_COST_PER_TIME = 1;
+    private static final int NORMAL_RIDE_MIN_FARE = 5;
+
+    private static final int PREMIUM_RIDE_MINIMUM_COST_PER_KILOMETER = 15;
+    private static final int PREMIUM_RIDE_COST_PER_TIME = 2;
+    private static final int PREMIUM_RIDE_MIN_FARE = 10;
+
+    private static final String NORMAL_RIDE = "NORMAL";
+    private static final String PREMIUM_RIDE = "PREMIUM";
 
     //creating map for multiple rides
     public Map<String, List<Ride>> rideRepository = new HashMap<>();
 
     //Creating calculateFare method to calculate the fare for the given distance and time
-    public static double calculateFare(double distance, int time) {//parameterized method
-        double totalFare = distance * MINIMUM_COST_PER_KILOMETER + time * COST_PER_TIME;
-        return Math.max(totalFare, MIN_FARE);
+    public double calculateFare(double distance, int time, String rideType) {
+        double totalFare = 0.0;
+        if (NORMAL_RIDE.equalsIgnoreCase(rideType)) {
+            totalFare = distance * NORMAL_RIDE_MINIMUM_COST_PER_KILOMETER + time * NORMAL_RIDE_COST_PER_TIME;
+            return Math.max(totalFare, NORMAL_RIDE_MIN_FARE);
+        } else if (PREMIUM_RIDE.equalsIgnoreCase(rideType)) {
+            totalFare = distance * PREMIUM_RIDE_MINIMUM_COST_PER_KILOMETER + time * PREMIUM_RIDE_COST_PER_TIME;
+            return Math.max(totalFare, PREMIUM_RIDE_MIN_FARE);
+        }
+        return totalFare;
     }
 
     //Creating calculateFare method with multiple rides
     public Invoice calculateFare(Ride[] rides) {
         double totalFare = 0;
         for (Ride ride : rides) {
-            totalFare += calculateFare(ride.getDistance(), ride.getTime());
+            totalFare += calculateFare(ride.getDistance(), ride.getTime(), ride.getRideType());
         }
         return new Invoice(rides.length, totalFare);
     }
 
     //Multiple rides from rideRepository and return invoice
-    public Invoice calculateFare(String userId) {
+    public Invoice calculateFare(String userId) throws CabInvoiceCustomException {
         List<Ride> rides = rideRepository.get(userId);
+        if (rides == null) {
+            throw new CabInvoiceCustomException("Invalid User", CabInvoiceCustomException.ExceptionType.INVALID_USER);
+        }
         double totalFare = 0;
         for (Ride ride : rides) {
-            totalFare += calculateFare(ride.getDistance(), ride.getTime());
+            totalFare += calculateFare(ride.getDistance(), ride.getTime(), ride.getRideType());
         }
         return new Invoice(rides.size(), totalFare);
-    }
-
-    public static void main(String[] args) {
-        System.out.println("Total Fair is : " + calculateFare(5.5, 10));//calling method calculateFare and pass distance and time
     }
 }
